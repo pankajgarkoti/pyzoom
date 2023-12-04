@@ -17,28 +17,28 @@ class MyZoomBase(BaseModel):
 
 
 class ZoomMeetingSettings(MyZoomBase):
-    host_video: bool
-    participant_video: bool
-    cn_meeting: bool
-    in_meeting: bool
-    join_before_host: bool
-    mute_upon_entry: bool
-    watermark: bool
-    use_pmi: bool
-    approval_type: Literal[0, 1, 2]
-    registration_type: Optional[Literal[1, 2, 3]]
-    audio: Literal["voip", "telephony", "both"]
-    auto_recording: Literal["local", "cloud", "none"]
-    enforce_login: bool
+    host_video: bool = True
+    participant_video: bool = True
+    cn_meeting: bool = False
+    in_meeting: bool = False
+    join_before_host: bool = True
+    mute_upon_entry: bool = True
+    watermark: bool = False
+    use_pmi: bool = False
+    approval_type: Literal[0, 1, 2] = 0
+    registration_type: Optional[Literal[1, 2, 3]] = 1
+    audio: Literal["voip", "telephony", "both"] = "both"
+    auto_recording: Literal["local", "cloud", "none"] = "local"
+    enforce_login: bool = False
     enforce_login_domains: Optional[str] = None
     alternative_hosts: Optional[str] = None
     close_registration: Optional[bool] = None
-    waiting_room: bool
+    waiting_room: bool = True
     global_dial_in_countries: Optional[List[str]] = None
     contact_name: Optional[str] = None
     contact_email: Optional[str] = None
-    registrants_email_notification: bool
-    meeting_authentication: bool
+    registrants_email_notification: bool = True
+    meeting_authentication: bool = False
     authentication_option: Optional[str] = None
     authentication_domains: Optional[str] = None
 
@@ -50,19 +50,17 @@ class ZoomMeetingSettings(MyZoomBase):
             join_before_host=True,
             mute_upon_entry=True,
             approval_type=0,
+            registration_type=1,
             cn_meeting=False,
             in_meeting=False,
             watermark=False,
             use_pmi=False,
-            registration_type=1,
             audio="voip",
             auto_recording="none",
             enforce_login=True,
             waiting_room=False,
             registrants_email_notification=False,
             meeting_authentication=True,
-            contact_name="UFY",
-            contact_email="ufyit@support.com",
         )
 
 

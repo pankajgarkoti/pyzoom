@@ -18,7 +18,9 @@ class MeetingsComponent:
 
     def list_meetings(self) -> schemas.ZoomMeetingShortList:
         endpoint = "/users/me/meetings"
-        return schemas.ZoomMeetingShortList(**self._client.get(endpoint).json())
+        return schemas.ZoomMeetingShortList(
+            **self._client.get(endpoint).json()
+        )
 
     def get_meeting(self, meeting_id: int) -> schemas.ZoomMeeting:
         endpoint = f"/meetings/{meeting_id}"
@@ -88,16 +90,18 @@ class MeetingsComponent:
         response = self._client.patch(endpoint, body=body)
         return {}
 
-    def delete_meeting(self, meeting_id: int) -> bool:
+    def delete_meeting(self, meeting_id: int, occurence_id: str) -> bool:
         endpoint = f"/meetings/{meeting_id}"
-        r = self._client.delete(endpoint)
+        r = self._client.delete(endpoint, query={"occurence_id": occurence_id})
         return r.status_code == 204
 
     def list_meeting_registrants(
         self, meeting_id: int
     ) -> schemas.MeetingRegistrantsList:
         endpoint = f"/meetings/{meeting_id}/registrants"
-        return schemas.MeetingRegistrantsList(**self._client.get_all_pages(endpoint))
+        return schemas.MeetingRegistrantsList(
+            **self._client.get_all_pages(endpoint)
+        )
 
     def update_meeting_registrant_status(
         self,
@@ -114,7 +118,13 @@ class MeetingsComponent:
         return self._client.put(endpoint, body=body)
 
     def add_meeting_registrant(
-        self, meeting_id: int, *, first_name: str, last_name: str, email: str, **kwargs
+        self,
+        meeting_id: int,
+        *,
+        first_name: str,
+        last_name: str,
+        email: str,
+        **kwargs,
     ) -> schemas.RegistrantConfirmation:
         endpoint = f"/meetings/{meeting_id}/registrants"
         registrant = schemas.MeetingRegistrant(
@@ -125,7 +135,13 @@ class MeetingsComponent:
         )
 
     def add_and_confirm_registrant(
-        self, meeting_id: int, *, first_name: str, last_name: str, email: str, **kwargs
+        self,
+        meeting_id: int,
+        *,
+        first_name: str,
+        last_name: str,
+        email: str,
+        **kwargs,
     ) -> schemas.RegistrantConfirmation:
         confirmation = self.add_meeting_registrant(
             meeting_id,
@@ -145,25 +161,35 @@ class MeetingsComponent:
         )
         return confirmation
 
-    def cancel_registration(self, meeting_id: int, *, registrant_id: str, email: str):
+    def cancel_registration(
+        self, meeting_id: int, *, registrant_id: str, email: str
+    ):
         self.update_meeting_registrant_status(
             meeting_id,
             action="cancel",
-            registrants=[schemas.MeetingRegistrantShort(id=registrant_id, email=email)],
+            registrants=[
+                schemas.MeetingRegistrantShort(id=registrant_id, email=email)
+            ],
         )
 
-    def approve_registration(self, meeting_id: int, *, registrant_id: str, email: str):
+    def approve_registration(
+        self, meeting_id: int, *, registrant_id: str, email: str
+    ):
         self.update_meeting_registrant_status(
             meeting_id,
             action="approve",
-            registrants=[schemas.MeetingRegistrantShort(id=registrant_id, email=email)],
+            registrants=[
+                schemas.MeetingRegistrantShort(id=registrant_id, email=email)
+            ],
         )
 
     def past_meeting_participants(
         self, meeting_id: int
     ) -> schemas.MeetingParticipantList:
         endpoint = f"/past_meetings/{meeting_id}/participants"
-        return schemas.MeetingParticipantList(**self._client.get_all_pages(endpoint))
+        return schemas.MeetingParticipantList(
+            **self._client.get_all_pages(endpoint)
+        )
 
 
 @attr.s
@@ -175,7 +201,9 @@ class UsersComponent:
         query = {
             "status": status,
         }
-        return schemas.ZoomUserList(**self._client.get_all_pages(endpoint, query))
+        return schemas.ZoomUserList(
+            **self._client.get_all_pages(endpoint, query)
+        )
 
     def delete_user(
         self,

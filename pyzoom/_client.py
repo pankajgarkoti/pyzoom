@@ -74,8 +74,16 @@ class MeetingsComponent:
         password: str = None,
         settings: schemas.ZoomMeetingSettings = None,
         meeting_id: int,
+        occurence_id: str | None = None,
     ) -> schemas.ZoomMeeting:
         endpoint = f"/meetings/{meeting_id}"
+        params = (
+            {
+                "occurence_id": occurence_id,
+            }
+            if occurence_id is not None
+            else {}
+        )
         body = {
             "topic": topic,
             "type": type_,
@@ -87,8 +95,8 @@ class MeetingsComponent:
             if settings
             else schemas.ZoomMeetingSettings.default_settings().dict(),
         }
-        response = self._client.patch(endpoint, body=body)
-        return {}
+        response = self._client.patch(endpoint, query=params, body=body)
+        return response.json()
 
     def delete_meeting(self, meeting_id: int, occurence_id: str) -> bool:
         endpoint = f"/meetings/{meeting_id}"
